@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { auth } from './firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ export default function RegisterScreen({ navigation }) {
 
     setLoading(true);
     try {
-      await auth.createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -31,7 +32,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> Registrarse</Text>
+      <Text style={styles.title}>📝 Registrarse</Text>
       
       <TextInput
         style={styles.input}

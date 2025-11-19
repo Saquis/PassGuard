@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export default function AddPasswordScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>➕ Agregar Contraseña</Text>
+      <Text style={styles.title}> Agregar Contraseña</Text>
       <Text style={styles.subtitle}>Pantalla en construcción</Text>
       
       <TouchableOpacity 

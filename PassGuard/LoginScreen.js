@@ -1,7 +1,9 @@
 // LoginScreen.js
+// LoginScreen.js - CORREGIDO
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { auth } from './firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -16,7 +18,7 @@ export default function LoginScreen({ navigation }) {
 
     setLoading(true);
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -25,7 +27,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> PassGuard</Text>
+      <Text style={styles.title}>🔐 PassGuard</Text>
       
       <TextInput
         style={styles.input}

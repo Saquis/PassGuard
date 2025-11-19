@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🏠 Mis Contraseñas</Text>
+      <Text style={styles.title}> Mis Contraseñas</Text>
       <Text style={styles.subtitle}>Pantalla principal - En construcción</Text>
       
       <TouchableOpacity 
