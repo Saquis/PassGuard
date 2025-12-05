@@ -32,7 +32,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📝 Registrarse</Text>
+      <Text style={styles.title}> Registrarse</Text>
       
       <TextInput
         style={styles.input}

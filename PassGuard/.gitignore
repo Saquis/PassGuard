@@ -38,4 +38,4 @@ yarn-error.*
 
 # generated native folders
 /ios
-/android
+# /android  <--- BORRADA O COMENTADA para que SI se suba

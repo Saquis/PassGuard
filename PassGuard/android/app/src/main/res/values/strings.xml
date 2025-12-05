@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PassGuard</string>
+    <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+    <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+
+    <!-- CONFIGURACIÓN DE FACEBOOK -->
+    <!-- Reemplaza esto con el ID Numérico si este código alfanumérico no funciona -->
+    <string name="facebook_app_id">854369444121102</string>
+    
+    <!-- El esquema debe ser "fb" seguido de tu ID -->
+    <string name="fb_login_protocol_scheme">fb854369444121102</string>
+    
+    <!-- Token de Cliente (El código largo que obtuvimos antes) -->
+    <string name="facebook_client_token">f9b4163185222825e38ed460921f74afc8981905aa5c02d7ac928be8f4862df3</string>
+</resources>

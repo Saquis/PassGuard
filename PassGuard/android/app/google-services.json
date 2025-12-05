@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "722814074268",
+    "project_id": "passguard-2959a",
+    "storage_bucket": "passguard-2959a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722814074268:android:af0a2da42a38e956b25c59",
+        "android_client_info": {
+          "package_name": "com.saquis.PassGuard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722814074268-5kk77p959he03s9i8lns65fe7uvlpl3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saquis.PassGuard",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "722814074268-5tgmvghv68ecvaebn8cfbmh3b5nrakbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIdFxdJ6kOwUDRPVR8hP6iNwpWpIh8mCQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722814074268-5tgmvghv68ecvaebn8cfbmh3b5nrakbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
