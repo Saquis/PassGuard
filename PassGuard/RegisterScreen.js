@@ -10,9 +10,30 @@ export default function RegisterScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  //VALIDACIONES PARA:
+  // CORREO
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //CONTRASEÑA
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
+
+    // Validar email
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Ingresa un correo válido (debe incluir @ y un dominio válido)');
+      return;
+    }
+
+    // Validar contraseña
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe contener:\n- Una mayúscula\n- Una minúscula\n- Un número\n- Un carácter especial (!@#$%^&*()_+)\n- Mínimo 8 caracteres'
+      );
       return;
     }
 
@@ -33,16 +54,16 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Registrarse</Text>
-      
+      <Text style = {styles.inputText}>Ingrese su correo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="ejemplo@gmail.com"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
+      <Text style = {styles.inputText}>Ingrese su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -50,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      
+      <Text style = {styles.inputText}>Repita su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Confirmar Contraseña"
@@ -58,8 +79,8 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      
-      <Pressable 
+
+      <Pressable
         style={({ pressed }) => [
           styles.button,
           pressed && styles.buttonPressed
@@ -71,7 +92,7 @@ export default function RegisterScreen({ navigation }) {
           {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
         </Text>
       </Pressable>
-      
+
       <Pressable onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>¿Ya tienes cuenta? Inicia Sesión</Text>
       </Pressable>
@@ -84,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
   },
   title: {
     fontSize: 28,
@@ -92,20 +113,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
+  inputText: {
+    marginBottom: 20,
+    fontSize: 20,
+    color: 'ffffff',
+    fontWeight: 'bold'
+  },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: 'ffffff',
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+    color: '000000'
   },
   button: {
     backgroundColor: '#34C759',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 15,
+    marginVertical: 15
   },
   buttonPressed: {
     backgroundColor: '#2AA44F',

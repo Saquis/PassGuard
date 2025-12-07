@@ -16,12 +16,33 @@ export default function LoginScreen({ navigation }) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
 
+  //VALIDACIONES PARA:
+  // CORREO
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //CONTRASEÑA
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+
   // --- Lógica Login Correo/Password ---
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
+
+     // Validar email
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Error', 'Ingresa un correo válido (debe incluir @ y un dominio válido)');
+      return;
+    }
+
+    // Validar formato de contraseña (misma política que en Register)
+    /*if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe contener:\n- Una mayúscula\n- Una minúscula\n- Un número\n- Un carácter especial (!@#$%^&*()_+)\n- Mínimo 8 caracteres'
+      );
+      return;
+    }*/
 
     setLoading(true);
     try {
@@ -104,17 +125,17 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🔐 PassGuard</Text>
-      
+      <Text style={styles.title}>PassGuard</Text>
+      <Text style= {styles.inputText}>Ingrese su correo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="ejemplo@gmail.com"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
+      <Text style= {styles.inputText}>Ingrese su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -183,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
   },
   title: {
     fontSize: 32,
@@ -191,16 +212,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
+  inputText: {
+    paddingBottom: 20,
+    fontSize: 20,
+    color: 'ffffff',
+    fontWeight: 'bold'
+  },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: 'ffffff',
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+    color: '000000'
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#707070',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
