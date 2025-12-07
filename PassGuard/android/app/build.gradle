@@ -181,3 +181,6 @@ dependencies {
     }
 }
 apply plugin: 'com.google.gms.google-services'
+
+// ESTA ES LA LÍNEA IMPORTANTE PARA LOS ÍCONOS
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
