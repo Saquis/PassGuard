@@ -16,12 +16,33 @@ export default function LoginScreen({ navigation }) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
 
+  //VALIDACIONES PARA:
+  // CORREO
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //CONTRASEÑA
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+
   // --- Lógica Login Correo/Password ---
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
+
+     // Validar email
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Error', 'Ingresa un correo válido (debe incluir @ y un dominio válido)');
+      return;
+    }
+
+    // Validar formato de contraseña (misma política que en Register)
+    /*if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe contener:\n- Una mayúscula\n- Una minúscula\n- Un número\n- Un carácter especial (!@#$%^&*()_+)\n- Mínimo 8 caracteres'
+      );
+      return;
+    }*/
 
     setLoading(true);
     try {
