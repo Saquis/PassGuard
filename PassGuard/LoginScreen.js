@@ -1,13 +1,19 @@
-// LoginScreen.js - VERSIÓN CON GOOGLE Y FACEBOOK SIGN-IN
+// LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-// 1. IMPORTACIONES FIREBASE
+import { 
+  View, Text, TextInput, Pressable, StyleSheet, Alert, 
+  ActivityIndicator, Image, PermissionsAndroid, Platform 
+} from 'react-native';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import { auth } from './firebase';
 import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
-// 2. IMPORTACIONES GOOGLE NATIVO
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-// 3. IMPORTACIONES FACEBOOK NATIVO
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -15,34 +21,20 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
+  const [userImage, setUserImage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  //VALIDACIONES PARA:
-  // CORREO
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //CONTRASEÑA
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
 
-  // --- Lógica Login Correo/Password ---
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
-
-     // Validar email
     if (!emailRegex.test(email.trim())) {
-      Alert.alert('Error', 'Ingresa un correo válido (debe incluir @ y un dominio válido)');
+      Alert.alert('Error', 'Ingresa un correo válido');
       return;
     }
-
-    // Validar formato de contraseña (misma política que en Register)
-    /*if (!passwordRegex.test(password)) {
-      Alert.alert(
-        'Error',
-        'La contraseña debe contener:\n- Una mayúscula\n- Una minúscula\n- Un número\n- Un carácter especial (!@#$%^&*()_+)\n- Mínimo 8 caracteres'
-      );
-      return;
-    }*/
 
     setLoading(true);
     try {
@@ -54,67 +46,30 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  // --- LÓGICA GOOGLE NATIVO ---
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       const { idToken } = userInfo.data || userInfo;
-
-      if (!idToken) {
-        throw new Error('No se pudo obtener el token de Google');
-      }
-
       const googleCredential = GoogleAuthProvider.credential(idToken);
       await signInWithCredential(auth, googleCredential);
-      
-      console.log("Login con Google exitoso");
-      
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('Cancelado por el usuario');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Login en curso');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert('Error', 'Servicios de Google Play no disponibles');
-      } else {
-        console.error(error);
-        Alert.alert('Error de Google', error.message);
-      }
+      console.error(error);
     } finally {
       setGoogleLoading(false);
     }
   };
 
-  // --- NUEVA LÓGICA FACEBOOK NATIVO ---
   const handleFacebookSignIn = async () => {
     setFacebookLoading(true);
     try {
-      // 1. Iniciar el flujo de Login de Facebook
       const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+      if (result.isCancelled) return;
 
-      // 2. Verificar si el usuario canceló
-      if (result.isCancelled) {
-        console.log('Login cancelado por el usuario');
-        return;
-      }
-
-      // 3. Obtener el Access Token
       const data = await AccessToken.getCurrentAccessToken();
-
-      if (!data) {
-        throw new Error('No se pudo obtener el token de Facebook');
-      }
-
-      // 4. Crear credencial para Firebase
       const facebookCredential = FacebookAuthProvider.credential(data.accessToken);
-
-      // 5. Autenticar en Firebase con esa credencial
       await signInWithCredential(auth, facebookCredential);
-      
-      console.log("Login con Facebook exitoso");
-      
     } catch (error) {
       console.error(error);
       Alert.alert('Error de Facebook', error.message);
@@ -123,85 +78,152 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Permiso de cámara',
+          message: 'La app necesita acceso a la cámara',
+          buttonNeutral: 'Preguntar luego',
+          buttonNegative: 'Cancelar',
+          buttonPositive: 'Aceptar',
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+    return true;
+  };
+
+  const selectImage = async () => {
+    const cameraPermission = await requestCameraPermission();
+
+    Alert.alert(
+      'Seleccionar Imagen',
+      'Elige una opción',
+      [
+        { 
+          text: 'Cámara', 
+          onPress: async () => {
+            if (!cameraPermission) {
+              Alert.alert('Permiso denegado', 'No se puede abrir la cámara');
+              return;
+            }
+            launchCamera({ mediaType: 'photo', saveToPhotos: true }, handleImageResult);
+          } 
+        },
+        { text: 'Galería', onPress: () => launchImageLibrary({ mediaType: 'photo' }, handleImageResult) },
+        { text: 'Cancelar', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleImageResult = (response) => {
+    if (!response.didCancel && !response.errorCode) {
+      const uri = response.assets[0].uri;
+      setUserImage(uri);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={Platform.OS === 'ios' ? 20 : 0}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Image
+        source={require('./assets/itq.png')}
+        style={{ width: 50, height: 50, position: 'absolute', top: 20, left: 20 }}
+      />
+
+      <Pressable onPress={selectImage} style={{ alignSelf: 'center', marginBottom: 20 }}>
+        {userImage ? (
+          <Image source={{ uri: userImage }} style={{ width: 90, height: 90, borderRadius: 45 }} />
+        ) : (
+          <Image source={require('./assets/perfil.jpg')} style={{ width: 90, height: 90, borderRadius: 45 }} />
+        )}
+      </Pressable>
+
       <Text style={styles.title}>PassGuard</Text>
-      <Text style= {styles.inputText}>Ingrese su correo</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="ejemplo@gmail.com"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <Text style= {styles.inputText}>Ingrese su contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      
-      {/* BOTÓN LOGIN CORREO */}
-      <Pressable 
-        style={({ pressed }) => [
-          styles.button,
-          pressed && styles.buttonPressed
-        ]}
+
+      <Text style={styles.inputText}>Ingrese su correo</Text>
+      <View style={styles.inputWrapper}>
+        <MaterialIcons name="email" size={22} color="#777" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="ejemplo@gmail.com"
+          placeholderTextColor="#777"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+      </View>
+
+      <Text style={styles.inputText}>Ingrese su contraseña</Text>
+      <View style={styles.inputWrapper}>
+        <MaterialIcons name="lock" size={22} color="#777" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          placeholderTextColor="#777"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+        />
+        <Pressable onPress={() => setShowPassword(!showPassword)}>
+          <FontAwesome
+            name={showPassword ? "eye" : "eye-slash"}
+            size={22}
+            color="#777"
+            style={{ marginRight: 10 }}
+          />
+        </Pressable>
+      </View>
+
+      <Pressable
+        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         onPress={handleLogin}
         disabled={loading || googleLoading || facebookLoading}
       >
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FontAwesome name="sign-in" size={18} color="white" style={{ marginRight: 8 }} />
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          </View>
         )}
       </Pressable>
 
-      {/* BOTÓN LOGIN GOOGLE */}
-      <Pressable 
-        style={({ pressed }) => [
-          styles.googleButton,
-          pressed && styles.googleButtonPressed
-        ]}
-        onPress={handleGoogleSignIn}
-        disabled={loading || googleLoading || facebookLoading}
-      >
-        {googleLoading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.googleButtonText}>Continuar con Google</Text>
-        )}
-      </Pressable>
+      <View style={styles.rowButtonsContainer}>
+        <Pressable
+          style={({ pressed }) => [styles.smallButton, { backgroundColor: '#DB4437' }, pressed && styles.googleButtonPressed]}
+          onPress={handleGoogleSignIn}
+        >
+          {googleLoading ? <ActivityIndicator color="white" /> : <FontAwesome name="google" size={18} color="white" />}
+        </Pressable>
 
-      {/* BOTÓN LOGIN FACEBOOK */}
-      <Pressable 
-        style={({ pressed }) => [
-          styles.facebookButton,
-          pressed && styles.facebookButtonPressed
-        ]}
-        onPress={handleFacebookSignIn}
-        disabled={loading || googleLoading || facebookLoading}
-      >
-        {facebookLoading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.facebookButtonText}>Continuar con Facebook</Text>
-        )}
-      </Pressable>
-      
-      <Pressable onPress={() => navigation.navigate('Register')}>
+        <Pressable
+          style={({ pressed }) => [styles.smallButton, { backgroundColor: '#1877F2' }, pressed && styles.facebookButtonPressed]}
+          onPress={handleFacebookSignIn}
+        >
+          {facebookLoading ? <ActivityIndicator color="white" /> : <FontAwesome name="facebook" size={18} color="white" />}
+        </Pressable>
+      </View>
+
+      <Pressable onPress={() => navigation.navigate('Register')} style={styles.registerRow}>
+        <MaterialIcons name="person-add" size={18} color="#007AFF" />
         <Text style={styles.link}>¿No tienes cuenta? Regístrate</Text>
       </Pressable>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
     backgroundColor: '#000000',
@@ -210,73 +232,78 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 40,
+    color: "#fff",
+    marginBottom: 20,
   },
   inputText: {
-    paddingBottom: 20,
-    fontSize: 20,
-    color: 'ffffff',
-    fontWeight: 'bold'
+    paddingBottom: 10,
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
   },
-  input: {
-    backgroundColor: 'ffffff',
-    padding: 15,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
-    color: '000000'
+    paddingLeft: 10,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    padding: 15,
+    color: '#000',
   },
   button: {
     backgroundColor: '#707070',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   buttonPressed: {
     backgroundColor: '#0056CC',
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
   },
-  // ESTILOS GOOGLE
-  googleButton: {
-    backgroundColor: '#DB4437',
-    padding: 15,
+  rowButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  smallButton: {
+    width: '48%',
+    padding: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   googleButtonPressed: {
     backgroundColor: '#C33C2E',
   },
-  googleButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  // ESTILOS FACEBOOK
-  facebookButton: {
-    backgroundColor: '#1877F2', // Azul Facebook
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 15,
-  },
   facebookButtonPressed: {
     backgroundColor: '#166FE5',
   },
-  facebookButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  registerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   link: {
     color: '#007AFF',
-    textAlign: 'center',
-    marginTop: 10,
+    marginLeft: 6,
+    marginTop: 8,
+    fontSize: 15,
   },
 });
