@@ -21,7 +21,7 @@ const AddPasswordScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.buttonExit}
         onPress={() => GoBack(navigation)}
       >
         <Text style={styles.buttonText}>Volver</Text>
@@ -39,9 +39,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    width: '75%',
+    textAlign: 'center',
+    marginBottom: 50
   },
   subtitle: {
     fontSize: 16,
@@ -50,10 +53,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#34C759',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 15,
+    width: '80%',
+  },
+  buttonExit: {
+    backgroundColor: '#FF3B30',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 15,
     width: '80%',
   },
   buttonText: {
@@ -61,58 +73,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  card: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    justifyContent: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    width: 60,
-    marginLeft: 10,
-    textAlign: 'center',
-    borderRadius: 5,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  label: {
-    fontWeight: 'bold',
-  },
-  passwordText: {
-    fontSize: 16,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    marginTop: 5,
-  },
   backButton: {
     backgroundColor: '#6c757d',
-  },
-  logoutButton: {
-    backgroundColor: '#dc3545',
   },
 });
 

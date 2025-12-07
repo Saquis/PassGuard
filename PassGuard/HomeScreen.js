@@ -2,7 +2,7 @@
 import { signOut } from 'firebase/auth';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { auth, updatePassword } from './firebase';
+import { auth } from './firebase';
 import * as Clipboard from 'expo-clipboard';
 
 export default function HomeScreen({ route, navigation }) {
@@ -53,7 +53,7 @@ export default function HomeScreen({ route, navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate('AddPassword')}
       >
-        <Text style={styles.buttonText}>+ Agregar Contraseña</Text>
+        <Text style={styles.buttonText}>+ Agregar Contraseña Segura</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

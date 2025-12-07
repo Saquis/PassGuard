@@ -54,16 +54,16 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Registrarse</Text>
-      <Text>Ingrese su correo</Text>
+      <Text style = {styles.inputText}>Ingrese su correo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="ejemplo@gmail.com"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <Text>Ingrese su contraseña</Text>
+      <Text style = {styles.inputText}>Ingrese su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -71,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Text>Repita su contraseña</Text>
+      <Text style = {styles.inputText}>Repita su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Confirmar Contraseña"
@@ -113,6 +113,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
+  inputText: {
+    marginBottom: 20,
+    fontSize: 20,
+    color: 'ffffff',
+    fontWeight: 'bold'
+  },
   input: {
     backgroundColor: 'ffffff',
     padding: 15,
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 15,
+    marginVertical: 15
   },
   buttonPressed: {
     backgroundColor: '#2AA44F',

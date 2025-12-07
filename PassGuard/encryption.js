@@ -6,11 +6,11 @@
 /**
  * Encripta texto usando AES-256
  * 
- *   NOTA EDUCATIVA: 
+ *   NOTA: 
  * - Firebase Auth YA hashea contraseñas automáticamente
  * - Este código es solo para DEMOSTRAR cómo encriptar datos sensibles
- * - Úsalo para: tarjetas de crédito, API keys, SSN, etc.
- * - NO lo uses para contraseñas si usas Firebase Auth
+ * - Se puede usar para: tarjetas de crédito, API keys, SSN, etc.
+ * - NO USAR para contraseñas si usas Firebase Auth
  */
 
 /*export const encryptPassword = (text) => {

@@ -126,16 +126,16 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>PassGuard</Text>
-      
+      <Text style= {styles.inputText}>Ingrese su correo</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="ejemplo@gmail.com"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
+      <Text style= {styles.inputText}>Ingrese su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -212,6 +212,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
+  inputText: {
+    paddingBottom: 20,
+    fontSize: 20,
+    color: 'ffffff',
+    fontWeight: 'bold'
+  },
   input: {
     backgroundColor: 'ffffff',
     padding: 15,
@@ -222,7 +228,7 @@ const styles = StyleSheet.create({
     color: '000000'
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#707070',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
