@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
   },
   title: {
     fontSize: 28,
@@ -93,12 +93,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: 'ffffff',
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+    color: '000000'
   },
   button: {
     backgroundColor: '#34C759',

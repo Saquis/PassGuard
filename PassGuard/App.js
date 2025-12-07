@@ -48,26 +48,26 @@ export default function App() {
       <Stack.Navigator>
         {!user ? (
           <>
-            <Stack.Screen 
-              name="Login" 
+            <Stack.Screen
+              name="Login"
               component={LoginScreen}
-              options={{ title: 'Iniciar Sesión', headerShown: false }} 
+              options={{ title: 'Iniciar Sesión', headerShown: false }}
             />
-            <Stack.Screen 
-              name="Register" 
+            <Stack.Screen
+              name="Register"
               component={RegisterScreen}
               options={{ title: 'Registrarse' }}
             />
           </>
         ) : (
           <>
-            <Stack.Screen 
-              name="Home" 
+            <Stack.Screen
+              name="Home"
               component={HomeScreen}
               options={{ title: 'Mis Contraseñas', headerLeft: null }}
             />
-            <Stack.Screen 
-              name="AddPassword" 
+            <Stack.Screen
+              name="AddPassword"
               component={AddPasswordScreen}
               options={{ title: 'Agregar Contraseña' }}
             />
