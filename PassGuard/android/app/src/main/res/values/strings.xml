@@ -5,11 +5,11 @@
 
     <!-- CONFIGURACIÓN DE FACEBOOK -->
     <!-- Reemplaza esto con el ID Numérico si este código alfanumérico no funciona -->
-    <string name="facebook_app_id">854369444121102</string>
+    <string name="facebook_app_id">853517237407634</string>
     
     <!-- El esquema debe ser "fb" seguido de tu ID -->
-    <string name="fb_login_protocol_scheme">fb854369444121102</string>
+    <string name="fb_login_protocol_scheme">fb9175037ecf66360eddd9ec07ad4e4cd0</string>
     
     <!-- Token de Cliente (El código largo que obtuvimos antes) -->
-    <string name="facebook_client_token">f9b4163185222825e38ed460921f74afc8981905aa5c02d7ac928be8f4862df3</string>
+    <string name="facebook_client_token">31c84f2ba42f669ce1a2136b2cc1ccf752bee0c8b1ebda927bdee6c1abe95e14</string>
 </resources>
