@@ -10,9 +10,30 @@ export default function RegisterScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  //VALIDACIONES PARA:
+  // CORREO
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //CONTRASEÑA
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
+
+    // Validar email
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Ingresa un correo válido (debe incluir @ y un dominio válido)');
+      return;
+    }
+
+    // Validar contraseña
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe contener:\n- Una mayúscula\n- Una minúscula\n- Un número\n- Un carácter especial (!@#$%^&*()_+)\n- Mínimo 8 caracteres'
+      );
       return;
     }
 
@@ -33,7 +54,7 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Registrarse</Text>
-      
+      <Text>Ingrese su correo</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -42,7 +63,7 @@ export default function RegisterScreen({ navigation }) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
+      <Text>Ingrese su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -50,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      
+      <Text>Repita su contraseña</Text>
       <TextInput
         style={styles.input}
         placeholder="Confirmar Contraseña"
@@ -58,8 +79,8 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      
-      <Pressable 
+
+      <Pressable
         style={({ pressed }) => [
           styles.button,
           pressed && styles.buttonPressed
@@ -71,7 +92,7 @@ export default function RegisterScreen({ navigation }) {
           {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
         </Text>
       </Pressable>
-      
+
       <Pressable onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>¿Ya tienes cuenta? Inicia Sesión</Text>
       </Pressable>
