@@ -11,83 +11,84 @@ import {
 } from 'react-native';
 import { auth } from './firebase';
 import { addPassword } from './passwordService';
-import { encryptPassword } from './encryption';
+import { encryptBase64, encryptPassword } from './encryption';
 import { handleGeneratePassword } from './passwordGenerator';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const AddPasswordScreen = ({ navigation }) => {
+const AddPasswordScreen = ({ navigation, route }) => {
   const [service, setService] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = () => {
-  const generated = handleGeneratePassword(); // Sin parámetros
-  if (generated) {
-    setPassword(generated);
-    // Opcional: mostrar confirmación
-    Alert.alert(
-      "Contraseña generada",
-      `Se generó: ${generated}`,
-      [{ text: "OK" }]
-    );
-  }
-};
+    const generated = handleGeneratePassword(); // Sin parámetros
+    if (generated) {
+      setPassword(generated);
+      // Opcional: mostrar confirmación
+      Alert.alert(
+        "Contraseña generada",
+        `Se generó: ${generated}`,
+        [{ text: "OK" }]
+      );
+    }
+  };
 
   const handleSave = async () => {
-  if (!service.trim() || !username.trim() || !password.trim()) {
-    Alert.alert('Error', 'Por favor completa todos los campos');
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const userId = auth.currentUser?.uid;
-    if (!userId) {
-      Alert.alert('Error', 'Usuario no autenticado');
+    if (!service.trim() || !username.trim() || !password.trim()) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
 
-    // 1. Obtener contraseña maestra 
-    // ESTO ES TEMPORAL - necesitas obtenerla del usuario real
-    const masterPassword = 'contraseñaMaestraUsuario';
+    setLoading(true);
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        Alert.alert('Error', 'Usuario no autenticado');
+        return;
+      }
 
-    // 2. Encriptar la contraseña (con AWAIT)
-    const encryptedPassword = await encryptPassword(password, masterPassword);
-    
-    if (!encryptedPassword) {
-      Alert.alert('Error', 'No se pudo encriptar la contraseña');
-      return;
+      // 1. Obtener contraseña maestra 
+      // ESTO ES TEMPORAL
+      // const masterPassword = 'contraseñaMaestraUsuario';
+
+      // 2. Encriptar la contraseña (con AWAIT)
+      // const encryptedPassword = await encryptPassword(password, masterPassword);
+      const encryptedPassword = encryptBase64(password)
+
+      if (!encryptedPassword) {
+        Alert.alert('Error', 'No se pudo encriptar la contraseña');
+        return;
+      }
+
+      // 3. Preparar datos para guardar
+      const passwordData = {
+        service: service.trim(),
+        username: username.trim(),
+        encryptedPassword: encryptedPassword
+      };
+
+      // 4. Guardar en Firestore
+      const result = await addPassword(userId, passwordData);
+
+      if (result.success) {
+        Alert.alert('Éxito', 'Contraseña guardada correctamente');
+        // Limpiar formulario
+        setService('');
+        setUsername('');
+        setPassword('');
+        // Navegar de vuelta
+        navigation.goBack();
+      } else {
+        Alert.alert('Error', result.error || 'Error al guardar');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Error inesperado');
+    } finally {
+      setLoading(false);
     }
-
-    // 3. Preparar datos para guardar
-    const passwordData = {
-      service: service.trim(),
-      username: username.trim(),
-      encryptedPassword: encryptedPassword
-    };
-
-    // 4. Guardar en Firestore
-    const result = await addPassword(userId, passwordData);
-    
-    if (result.success) {
-      Alert.alert('Éxito', 'Contraseña guardada correctamente');
-      // Limpiar formulario
-      setService('');
-      setUsername('');
-      setPassword('');
-      // Navegar de vuelta
-      navigation.goBack();
-    } else {
-      Alert.alert('Error', result.error || 'Error al guardar');
-    }
-  } catch (error) {
-    Alert.alert('Error', error.message || 'Error inesperado');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleGoBack = () => {
     navigation.goBack();

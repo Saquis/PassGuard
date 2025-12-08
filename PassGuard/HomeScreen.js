@@ -1,11 +1,11 @@
 // HomeScreen.js - VERSIÓN COMPLETA CON LISTA REAL
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Alert, 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
   Image,
   FlatList,
   Modal,
@@ -19,7 +19,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getPasswords, deletePassword } from './passwordService';
-import { decryptPassword } from './encryption';
+import { decryptBase64 } from './encryption';
 
 export default function HomeScreen({ route, navigation }) {
   const [passwords, setPasswords] = useState([]);
@@ -28,10 +28,12 @@ export default function HomeScreen({ route, navigation }) {
   const [selectedPassword, setSelectedPassword] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [searchText, setSearchText] = useState('');
-  
+
   // Cargar contraseñas al iniciar
   useEffect(() => {
-    loadPasswords();
+    navigation.addListener('focus', () => {
+      loadPasswords(); // Se ejecuta cada vez que entra a esta pantalla
+    });
   }, []);
 
   const loadPasswords = async () => {
@@ -39,8 +41,12 @@ export default function HomeScreen({ route, navigation }) {
     try {
       const userId = auth.currentUser?.uid;
       if (userId) {
+        // const decryptedPassword = await decryptPassword(password)
         const passwordsList = await getPasswords(userId);
-        setPasswords(passwordsList);
+        //setPasswords(passwordsList);
+
+        //NUEVO
+        setPasswords(passwordsList || []);
       }
     } catch (error) {
       console.error('Error cargando contraseñas:', error);
@@ -50,13 +56,13 @@ export default function HomeScreen({ route, navigation }) {
   };
 
   // Filtrar contraseñas por búsqueda
-  const filteredPasswords = passwords.filter(password => 
+  const filteredPasswords = passwords.filter(password =>
     password.service.toLowerCase().includes(searchText.toLowerCase()) ||
     password.username.toLowerCase().includes(searchText.toLowerCase())
   );
 
   // Ver contraseña (desencriptar y mostrar)
-  const viewPassword = (password) => {
+  /*const viewPassword = (password) => {
     try {
       // Aquí necesitarías obtener la contraseña maestra del usuario
       // Por ahora mostramos solo que está encriptada
@@ -64,6 +70,28 @@ export default function HomeScreen({ route, navigation }) {
       setModalVisible(true);
     } catch (error) {
       Alert.alert('Error', 'No se pudo desencriptar la contraseña');
+    }
+  };*/
+
+  const viewPassword = (item) => {
+    try {
+      // 1. Tomamos la contraseña encriptada que viene de la base de datos
+      const encryptedText = item.encryptedPassword || item.password;
+
+      // 2. La desencriptamos AQUI, solo para mostrarla en el modal
+      const decrypted = decryptBase64(encryptedText);
+
+      // 3. Creamos un objeto temporal para mostrarlo en el modal
+      const passwordToShow = {
+        ...item,
+        decryptedValue: decrypted // Guardamos el valor real aquí
+      };
+
+      setSelectedPassword(passwordToShow);
+      setModalVisible(true);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'No se pudo desencriptar la contraseña. Verifica tu clave.');
     }
   };
 
@@ -74,8 +102,8 @@ export default function HomeScreen({ route, navigation }) {
       '¿Estás seguro de eliminar esta contraseña?',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Eliminar', 
+        {
+          text: 'Eliminar',
           style: 'destructive',
           onPress: async () => {
             const userId = auth.currentUser?.uid;
@@ -119,23 +147,23 @@ export default function HomeScreen({ route, navigation }) {
         <Text style={styles.serviceText}>{item.service}</Text>
         <Text style={styles.usernameText}>{item.username}</Text>
       </View>
-      
+
       <View style={styles.actionsContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.actionButton}
           onPress={() => viewPassword(item)}
         >
           <Ionicons name="eye" size={22} color="#007AFF" />
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.actionButton}
           onPress={() => navigation.navigate('EditPassword', { passwordId: item.id, passwordData: item })}
         >
           <FontAwesome name="edit" size={20} color="#FF9500" />
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.actionButton}
           onPress={() => handleDelete(item.id)}
         >
@@ -232,29 +260,29 @@ export default function HomeScreen({ route, navigation }) {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Contraseña de {selectedPassword?.service}</Text>
             <Text style={styles.modalUsername}>{selectedPassword?.username}</Text>
-            
+
             <View style={styles.passwordDisplay}>
               <Text style={styles.passwordText}>
-                {showPassword ? '[Contraseña desencriptada aquí]' : '••••••••••••'}
+                {showPassword ? (selectedPassword?.decryptedValue || 'Error') : '••••••••••••'}
               </Text>
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Ionicons 
-                  name={showPassword ? "eye-off" : "eye"} 
-                  size={24} 
-                  color="#007AFF" 
+                <Ionicons
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={24}
+                  color="#007AFF"
                 />
               </TouchableOpacity>
             </View>
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.copyButton]}
-                onPress={() => copyToClipboard(selectedPassword?.username)}
+                onPress={() => copyToClipboard(selectedPassword?.decryptedValue)}
               >
-                <Text style={styles.modalButtonText}>Copiar Usuario</Text>
+                <Text style={styles.modalButtonText}>Copiar Contraseña</Text>
               </TouchableOpacity>
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 style={[styles.modalButton, styles.closeButton]}
                 onPress={() => setModalVisible(false)}
               >
