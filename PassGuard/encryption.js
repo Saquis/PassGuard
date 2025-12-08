@@ -1,47 +1,64 @@
-//import CryptoJS from 'crypto-js';
+// encryption.js - USANDO expo-crypto (ya instalado en tu package.json)
+import * as Crypto from 'expo-crypto';
 
-// Esta clave debería estar en .env y nunca en el código
-//const SECRET_KEY = 'clave-secreta-123';
-
-/**
- * Encripta texto usando AES-256
- * 
- *   NOTA: 
- * - Firebase Auth YA hashea contraseñas automáticamente
- * - Este código es solo para DEMOSTRAR cómo encriptar datos sensibles
- * - Se puede usar para: tarjetas de crédito, API keys, SSN, etc.
- * - NO USAR para contraseñas si usas Firebase Auth
- */
-
-/*export const encryptPassword = (text) => {
-    try {
-        if (!text) return "";
-        
-        // AES genera una IV aleatoria automáticamente
-        const ciphertext = CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
-        
-        console.log(" Encriptación exitosa");
-        return ciphertext;
-    } catch (error) {
-        console.error(" Error de encriptación:", error);
-        return null;
+// Encriptación SIMULADA para desarrollo (no es segura para producción)
+export const encryptPassword = async (plainText, masterPassword) => {
+  try {
+    if (!plainText || !masterPassword) {
+      console.error('Encryption: Faltan parámetros');
+      return null;
     }
-};*/
 
-/**
- * Desencripta texto encriptado con AES-256
- */
-/*export const decryptPassword = (ciphertext) => {
-    try {
-        if (!ciphertext) return "";
-        
-        const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
-        const originalText = bytes.toString(CryptoJS.enc.Utf8);
-        
-        console.log(" Desencriptación exitosa");
-        return originalText;
-    } catch (error) {
-        console.error(" Error de desencriptación:", error);
-        return "";
+    // Para desarrollo: guardar en texto plano con prefijo
+    // EN PRODUCCIÓN: Usar librería de encriptación real
+    return `dev_enc_${plainText}_${masterPassword.substring(0, 3)}`;
+    
+    // Alternativa: usar hash (no reversible pero mejor que texto plano)
+    // const digest = await Crypto.digestStringAsync(
+    //   Crypto.CryptoDigestAlgorithm.SHA256,
+    //   plainText + masterPassword
+    // );
+    // return `hash_${digest}`;
+  } catch (error) {
+    console.error('Error en encryptPassword:', error);
+    return null;
+  }
+};
+
+// Desencriptación SIMULADA
+export const decryptPassword = async (encryptedText, masterPassword) => {
+  try {
+    if (!encryptedText || !masterPassword) {
+      console.error('Decryption: Faltan parámetros');
+      return null;
     }
-};*/
+
+    // Para desarrollo: extraer del texto simulado
+    if (encryptedText.startsWith('dev_enc_')) {
+      const parts = encryptedText.split('_');
+      if (parts.length >= 4) {
+        return parts[2]; // Retornar la contraseña original
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error en decryptPassword:', error);
+    return null;
+  }
+};
+
+// Verificar si está "encriptado"
+export const isEncrypted = (text) => {
+  return text && typeof text === 'string' && 
+         (text.startsWith('dev_enc_') || text.startsWith('hash_'));
+};
+
+// Solo para desarrollo
+const EncryptionService = {
+  encryptPassword,
+  decryptPassword,
+  isEncrypted
+};
+
+export default EncryptionService;
