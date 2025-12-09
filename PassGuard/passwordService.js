@@ -1,4 +1,3 @@
-// passwordService.js
 import { 
   collection, 
   addDoc, 
@@ -12,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-// 1. OBTENER todas las contraseñas del usuario (ordenadas por fecha)
+// OBTENER todas las contraseñas del usuario
 export const getPasswords = async (userId) => {
   try {
     const passwordsRef = collection(db, 'users', userId, 'passwords');
@@ -34,7 +33,7 @@ export const getPasswords = async (userId) => {
   }
 };
 
-// 2. AGREGAR nueva contraseña (ENCRIPTADA)
+// AGREGAR nueva contraseña (ENCRIPTADA)
 export const addPassword = async (userId, passwordData) => {
   try {
     const passwordsRef = collection(db, 'users', userId, 'passwords');
@@ -53,7 +52,7 @@ export const addPassword = async (userId, passwordData) => {
   }
 };
 
-// 3. ACTUALIZAR contraseña existente
+// ACTUALIZAR contraseña existente
 export const updatePassword = async (userId, passwordId, newData) => {
   try {
     const passwordRef = doc(db, 'users', userId, 'passwords', passwordId);
@@ -70,7 +69,7 @@ export const updatePassword = async (userId, passwordId, newData) => {
   }
 };
 
-// 4. ELIMINAR contraseña
+// ELIMINAR contraseña
 export const deletePassword = async (userId, passwordId) => {
   try {
     const passwordRef = doc(db, 'users', userId, 'passwords', passwordId);
@@ -82,7 +81,7 @@ export const deletePassword = async (userId, passwordId) => {
   }
 };
 
-// 5. BUSCAR contraseñas por servicio
+// BUSCAR contraseñas por servicio
 export const searchPasswords = async (userId, searchText) => {
   try {
     const passwords = await getPasswords(userId);

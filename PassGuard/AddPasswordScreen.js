@@ -1,4 +1,3 @@
-// AddPasswordScreen.js - VERSIÓN CORREGIDA
 import React, { useState } from 'react';
 import {
   View,
@@ -11,7 +10,7 @@ import {
 } from 'react-native';
 import { auth } from './firebase';
 import { addPassword } from './passwordService';
-import { encryptBase64, encryptPassword } from './encryption';
+import { encryptBase64 } from './encryption';
 import { handleGeneratePassword } from './passwordGenerator';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -23,10 +22,9 @@ const AddPasswordScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = () => {
-    const generated = handleGeneratePassword(); // Sin parámetros
+    const generated = handleGeneratePassword();
     if (generated) {
       setPassword(generated);
-      // Opcional: mostrar confirmación
       Alert.alert(
         "Contraseña generada",
         `Se generó: ${generated}`,
@@ -49,11 +47,9 @@ const AddPasswordScreen = ({ navigation, route }) => {
         return;
       }
 
-      // 1. Obtener contraseña maestra 
-      // ESTO ES TEMPORAL
       // const masterPassword = 'contraseñaMaestraUsuario';
 
-      // 2. Encriptar la contraseña (con AWAIT)
+      // Encriptar la contraseña
       // const encryptedPassword = await encryptPassword(password, masterPassword);
       const encryptedPassword = encryptBase64(password)
 
@@ -62,14 +58,14 @@ const AddPasswordScreen = ({ navigation, route }) => {
         return;
       }
 
-      // 3. Preparar datos para guardar
+      // Preparar datos para guardar
       const passwordData = {
         service: service.trim(),
         username: username.trim(),
         encryptedPassword: encryptedPassword
       };
 
-      // 4. Guardar en Firestore
+      // Guardar en Firestore
       const result = await addPassword(userId, passwordData);
 
       if (result.success) {
@@ -78,7 +74,6 @@ const AddPasswordScreen = ({ navigation, route }) => {
         setService('');
         setUsername('');
         setPassword('');
-        // Navegar de vuelta
         navigation.goBack();
       } else {
         Alert.alert('Error', result.error || 'Error al guardar');

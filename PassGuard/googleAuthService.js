@@ -7,10 +7,9 @@ import * as Google from 'expo-auth-session/providers/google';
 WebBrowser.maybeCompleteAuthSession();
 
 export const useGoogleAuth = () => {
-  // SOLO usar webClientId, no pedir androidClientId
+  // webClientId
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: '722814074268-5tgmvghv68ecvaebn8cfbmh3b5nrakbc.apps.googleusercontent.com',
-    // NO incluir: expoClientId, androidClientId, iosClientId
   });
 
   useEffect(() => {

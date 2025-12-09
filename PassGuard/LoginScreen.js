@@ -1,8 +1,7 @@
-// LoginScreen.js
 import React, { useState } from 'react';
-import { 
-  View, Text, TextInput, Pressable, StyleSheet, Alert, 
-  ActivityIndicator, Image, PermissionsAndroid, Platform 
+import {
+  View, Text, TextInput, Pressable, StyleSheet, Alert,
+  ActivityIndicator, Image, PermissionsAndroid, Platform
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -26,6 +25,7 @@ export default function LoginScreen({ navigation }) {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // Valida los campos de entrada y ejecuta la autenticación con correo y contraseña en Firebase
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
@@ -46,6 +46,7 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // Gestiona el flujo de inicio de sesión con Google y credenciales
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
@@ -61,6 +62,7 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // Gestiona el flujo de inicio de sesión con Facebook solicitando permisos
   const handleFacebookSignIn = async () => {
     setFacebookLoading(true);
     try {
@@ -78,6 +80,7 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // Solicita permisos de uso de cámara en tiempo de ejecución
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.request(
@@ -95,6 +98,7 @@ export default function LoginScreen({ navigation }) {
     return true;
   };
 
+  // Despliega opciones para obtener una imagen desde la cámara o la galería del dispositivo
   const selectImage = async () => {
     const cameraPermission = await requestCameraPermission();
 
@@ -102,15 +106,15 @@ export default function LoginScreen({ navigation }) {
       'Seleccionar Imagen',
       'Elige una opción',
       [
-        { 
-          text: 'Cámara', 
+        {
+          text: 'Cámara',
           onPress: async () => {
             if (!cameraPermission) {
               Alert.alert('Permiso denegado', 'No se puede abrir la cámara');
               return;
             }
             launchCamera({ mediaType: 'photo', saveToPhotos: true }, handleImageResult);
-          } 
+          }
         },
         { text: 'Galería', onPress: () => launchImageLibrary({ mediaType: 'photo' }, handleImageResult) },
         { text: 'Cancelar', style: 'cancel' }
@@ -118,6 +122,7 @@ export default function LoginScreen({ navigation }) {
     );
   };
 
+  // Procesa la respuesta del selector de imágenes y actualiza el estado de la imagen de usuario
   const handleImageResult = (response) => {
     if (!response.didCancel && !response.errorCode) {
       const uri = response.assets[0].uri;

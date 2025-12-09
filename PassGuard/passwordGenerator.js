@@ -1,4 +1,3 @@
-// passwordGenerator.js - VERSIÓN COMPLETA CORREGIDA
 import { Alert } from 'react-native';
 
 // Generar contraseña aleatoria básica
@@ -21,24 +20,6 @@ export const handleGeneratePassword = () => {
         console.error("Error generando contraseña:", error);
         return null;
     }
-};
-
-// Función para mostrar alerta de confirmación
-export const showPasswordConfirmation = (password, onConfirm) => {
-    Alert.alert(
-        "Contraseña generada",
-        `Nueva contraseña: ${password}\n\n¿Usar esta contraseña?`,
-        [
-            {
-                text: "No",
-                style: "cancel"
-            },
-            {
-                text: "Sí",
-                onPress: onConfirm
-            }
-        ]
-    );
 };
 
 // Función para volver atrás

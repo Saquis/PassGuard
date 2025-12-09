@@ -1,4 +1,3 @@
-// HomeScreen.js - VERSIÓN COMPLETA CON LISTA REAL
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -41,11 +40,8 @@ export default function HomeScreen({ route, navigation }) {
     try {
       const userId = auth.currentUser?.uid;
       if (userId) {
-        // const decryptedPassword = await decryptPassword(password)
         const passwordsList = await getPasswords(userId);
-        //setPasswords(passwordsList);
 
-        //NUEVO
         setPasswords(passwordsList || []);
       }
     } catch (error) {
@@ -62,29 +58,16 @@ export default function HomeScreen({ route, navigation }) {
   );
 
   // Ver contraseña (desencriptar y mostrar)
-  /*const viewPassword = (password) => {
-    try {
-      // Aquí necesitarías obtener la contraseña maestra del usuario
-      // Por ahora mostramos solo que está encriptada
-      setSelectedPassword(password);
-      setModalVisible(true);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudo desencriptar la contraseña');
-    }
-  };*/
-
   const viewPassword = (item) => {
     try {
-      // 1. Tomamos la contraseña encriptada que viene de la base de datos
       const encryptedText = item.encryptedPassword || item.password;
 
-      // 2. La desencriptamos AQUI, solo para mostrarla en el modal
       const decrypted = decryptBase64(encryptedText);
 
-      // 3. Creamos un objeto temporal para mostrarlo en el modal
+      // Crea un objeto temporal para mostrarlo en el modal
       const passwordToShow = {
         ...item,
-        decryptedValue: decrypted // Guardamos el valor real aquí
+        decryptedValue: decrypted // Guarda el valor
       };
 
       setSelectedPassword(passwordToShow);

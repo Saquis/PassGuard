@@ -20,17 +20,17 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. CONFIGURACIÓN GLOBAL DE GOOGLE
+    // CONFIGURACIÓN GLOBAL DE GOOGLE
     GoogleSignin.configure({
       webClientId: "722814074268-5tgmvghv68ecvaebn8cfbmh3b5nrakbc.apps.googleusercontent.com",
       offlineAccess: true,
       forceCodeForRefreshToken: true,
     });
 
-    // 2. INICIALIZAR FACEBOOK SDK
+    // INICIALIZAR FACEBOOK SDK
     Settings.initializeSDK();
 
-    // 3. Escuchar cambios de sesión en Firebase
+    // Escuchar cambios de sesión en Firebase
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -40,7 +40,7 @@ export default function App() {
   }, []);
 
   if (loading) {
-    return null; // O un componente de Loading...
+    return null;
   }
 
   return (

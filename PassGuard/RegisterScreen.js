@@ -1,4 +1,3 @@
-// RegisterScreen.js
 import React, { useState } from 'react';
 import { 
   View, Text, TextInput, Pressable, StyleSheet, Alert, Image, Platform 

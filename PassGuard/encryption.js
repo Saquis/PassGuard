@@ -1,4 +1,4 @@
-// encryption.js - USANDO expo-crypto (ya instalado en tu package.json)
+// encryption.js
 import CryptoJS from 'crypto-js';
 
 //ENCRIPTACION REAL PARA IMPLEMENTACION
